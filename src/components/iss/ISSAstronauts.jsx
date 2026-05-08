@@ -32,7 +32,7 @@ export function ISSAstronauts() {
       </div>
       <ul className="space-y-3 overflow-y-auto pr-2 custom-scrollbar flex-1 max-h-[400px]">
         {astronauts.map((astro, idx) => (
-          <li key={idx} className="flex items-center p-3 bg-gray-50 dark:bg-space-900 rounded-lg border border-gray-100 dark:border-white/5 hover:border-blue-500/30 transition-colors group">
+          <li key={idx} className="flex items-center p-3 bg-stone-50 dark:bg-space-900 rounded-lg border border-gray-100 dark:border-white/5 hover:border-blue-500/30 transition-colors group">
             <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold mr-3 group-hover:scale-110 transition-transform">
               {astro.name.charAt(0)}
             </div>

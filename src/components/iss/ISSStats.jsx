@@ -36,7 +36,7 @@ export function ISSStats({ currentPos, currentSpeed, nearestPlace, positionsCoun
         return (
           <div key={idx} className="bg-white/80 dark:bg-space-800/80 backdrop-blur-md p-6 rounded-xl border border-gray-200 dark:border-white/10 shadow-sm hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/20 transition-all duration-300 group">
             <div className="flex items-center space-x-4">
-              <div className={`p-3 rounded-lg bg-gray-50 dark:bg-space-900 border border-gray-100 dark:border-white/5 group-hover:scale-110 transition-transform duration-300 ${stat.color}`}>
+              <div className={`p-3 rounded-lg bg-stone-50 dark:bg-space-900 border border-gray-100 dark:border-white/5 group-hover:scale-110 transition-transform duration-300 ${stat.color}`}>
                 <Icon size={24} />
               </div>
               <div>

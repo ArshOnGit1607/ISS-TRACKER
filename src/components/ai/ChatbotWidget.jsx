@@ -50,7 +50,7 @@ export function ChatbotWidget({ issData, newsData }) {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 dark:bg-space-900/50 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-stone-50/50 dark:bg-space-900/50 custom-scrollbar">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.role === 'assistant' && <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mr-2 mt-1 flex-shrink-0"><Bot size={14} className="text-blue-600 dark:text-blue-400" /></div>}
