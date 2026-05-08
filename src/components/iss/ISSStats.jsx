@@ -1,7 +1,7 @@
 import React from 'react';
-import { Navigation, MapPin, Gauge, Clock } from 'lucide-react';
+import { Navigation, MapPin, Gauge, ArrowUp } from 'lucide-react';
 
-export function ISSStats({ currentPos, currentSpeed, nearestPlace, positionsCount }) {
+export function ISSStats({ currentPos, currentSpeed, nearestPlace, altitude, positionsCount }) {
   const stats = [
     {
       label: 'Latitude',
@@ -17,9 +17,15 @@ export function ISSStats({ currentPos, currentSpeed, nearestPlace, positionsCoun
     },
     {
       label: 'Velocity',
-      value: currentSpeed ? `${Math.round(currentSpeed)} km/h` : 'Calculating...',
+      value: currentSpeed ? `${Math.round(currentSpeed).toLocaleString()} km/h` : 'Calculating...',
       icon: Gauge,
       color: 'text-purple-500'
+    },
+    {
+      label: 'Altitude',
+      value: altitude ? `${Math.round(altitude)} km` : 'Computing...',
+      icon: ArrowUp,
+      color: 'text-amber-500'
     },
     {
       label: 'Nearest Region',
@@ -30,7 +36,7 @@ export function ISSStats({ currentPos, currentSpeed, nearestPlace, positionsCoun
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
       {stats.map((stat, idx) => {
         const Icon = stat.icon;
         return (

@@ -6,7 +6,7 @@ import { RefreshCw, Satellite } from 'lucide-react';
 import { ErrorState } from '../common/ErrorState';
 
 export function ISSDashboard({ data }) {
-  const { currentPos, positions, currentSpeed, nearestPlace, loading, error, refresh } = data;
+  const { currentPos, positions, currentSpeed, altitude, nearestPlace, loading, error, refresh } = data;
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -17,7 +17,7 @@ export function ISSDashboard({ data }) {
             ISS Live Telemetry
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1 uppercase tracking-widest text-xs">
-            Orbital tracking and spatial data array
+            SGP4 orbital propagation • real-time computation
           </p>
         </div>
         <button 
@@ -39,6 +39,7 @@ export function ISSDashboard({ data }) {
       <ISSStats 
         currentPos={currentPos} 
         currentSpeed={currentSpeed} 
+        altitude={altitude}
         nearestPlace={nearestPlace}
         positionsCount={positions ? positions.length : 0}
       />

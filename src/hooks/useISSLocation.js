@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchISSLocation, fetchNearestPlace } from '../services/iss';
-import { calculateSpeed } from '../utils/haversine';
 import toast from 'react-hot-toast';
 
-export function useISSLocation(pollingInterval = 15000) {
+export function useISSLocation(pollingInterval = 5000) {
   const [positions, setPositions] = useState([]);
   const [currentSpeed, setCurrentSpeed] = useState(0);
+  const [altitude, setAltitude] = useState(null);
   const [nearestPlace, setNearestPlace] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,40 +26,58 @@ export function useISSLocation(pollingInterval = 15000) {
           if (updated.length > 15) {
             updated.shift();
           }
-          
-          if (updated.length >= 2) {
-            const p1 = updated[updated.length - 2];
-            const p2 = updated[updated.length - 1];
-            const timeDiff = p2.timestamp - p1.timestamp;
-            if (timeDiff > 0) {
-              const speed = calculateSpeed(p1.lat, p1.lng, p2.lat, p2.lng, timeDiff);
-              setCurrentSpeed(speed);
-            }
-          }
-          
           return updated;
         });
         
-        const placeData = await fetchNearestPlace(newPos.lat, newPos.lng);
-        if (placeData && placeData.name) {
-          setNearestPlace(placeData.name);
-        } else if (placeData && placeData.address && placeData.address.country) {
-          setNearestPlace(placeData.address.country);
-        } else {
-          setNearestPlace('Ocean / Unknown');
+        // Speed comes directly from SGP4 velocity vector — much more accurate
+        if (data.speed) {
+          setCurrentSpeed(data.speed);
+        }
+        
+        if (data.altitude) {
+          setAltitude(data.altitude);
+        }
+        
+        // Only reverse-geocode every 15 seconds to respect Nominatim rate limits
+        if (isFirstLoad.current || isManual || !nearestPlace) {
+          const placeData = await fetchNearestPlace(newPos.lat, newPos.lng);
+          if (placeData && placeData.name) {
+            setNearestPlace(placeData.name);
+          } else if (placeData && placeData.address && placeData.address.country) {
+            setNearestPlace(placeData.address.country);
+          } else {
+            setNearestPlace('Ocean / Unknown');
+          }
         }
         
         setError(null);
-        if (isManual) toast.success('Tracker updated!');
+        if (isManual) toast.success('Telemetry synced!');
       }
     } catch (err) {
-      setError('Failed to fetch ISS location');
-      if (isManual || isFirstLoad.current) toast.error('Failed to sync ISS telemetry');
+      setError('Failed to compute ISS position');
+      if (isManual || isFirstLoad.current) toast.error('Telemetry sync failed');
     } finally {
       setLoading(false);
       isFirstLoad.current = false;
     }
-  }, []);
+  }, [nearestPlace]);
+
+  // Reverse geocode on a slower cadence (every 30s)
+  useEffect(() => {
+    const currentPos = positions[positions.length - 1];
+    if (!currentPos) return;
+    
+    const geoInterval = setInterval(async () => {
+      const placeData = await fetchNearestPlace(currentPos.lat, currentPos.lng);
+      if (placeData && placeData.name) {
+        setNearestPlace(placeData.name);
+      } else if (placeData && placeData.address && placeData.address.country) {
+        setNearestPlace(placeData.address.country);
+      }
+    }, 30000);
+
+    return () => clearInterval(geoInterval);
+  }, [positions.length]);
 
   useEffect(() => {
     updateLocation();
@@ -71,6 +89,7 @@ export function useISSLocation(pollingInterval = 15000) {
     currentPos: positions[positions.length - 1] || null, 
     positions, 
     currentSpeed, 
+    altitude,
     nearestPlace, 
     loading, 
     error,
